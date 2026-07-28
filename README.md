@@ -14,6 +14,10 @@ PokePoke is a macOS menu-bar tool that watches **Claude Code**, **Cursor**, and 
 ![Latest Release](https://img.shields.io/github/v/release/hellokidder/PokePoke)
 ![Local-first](https://img.shields.io/badge/data-local--first-5eead4)
 
+<br />
+
+<img src=".github/assets/demo01.gif" alt="PokePoke demo — menu bar nudge and jump-back" width="720" />
+
 </div>
 
 ---
