@@ -39,6 +39,13 @@ PokePoke is built around one loop:
 
 The popup **stays on screen until you act** — switch spaces, grab coffee, come back, it's still there. That's the whole bet: less elegant than a notch animation, much harder to ignore.
 
+## Why PokePoke
+
+- **Stop babysitting terminals** — start an agent, walk away. PokePoke brings you back the moment it needs you, instead of the other way around.
+- **The nudge that doesn't disappear** — popups stay until you act, so a "waiting for your input" that lands while you're in another app doesn't get lost in a notification stack.
+- **One click back to the action** — click the alert and you're in the exact terminal window, right where your agent is stuck.
+- **Quiet until it matters** — no dashboard, no cloud, no accounts. It only speaks up when your agent does.
+
 ## Integrations
 
 Connect the agents you already use. PokePoke writes user-level hook config and keeps every signal in one menu-bar panel.
@@ -78,6 +85,10 @@ Everything PokePoke tracks lives on your machine under `~/.pokepoke/`. Hooks tal
 3. Launch PokePoke — it lives in your menu bar. Connect your agents from the panel.
 
 Updates are delivered in-app via the built-in updater.
+
+---
+
+> **Enjoying PokePoke? ⭐ Star this repository** — it helps more developers never miss their agent's moment.
 
 ## Links
 
