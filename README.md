@@ -6,13 +6,15 @@
 
 ### Never miss the moment your coding agent needs you.
 
-PokePoke is a macOS menu-bar tool that watches **Claude Code**, **Cursor**, and **Codex CLI** from your menu bar — then nudges you when a session is waiting, done, or stuck.
+PokePoke is a macOS menu-bar tool that watches **Claude Code**, **Cursor**, **Codex**, **opencode**, **pi**, **omp**, **Kimi Code**, and **Grok Build** from your menu bar — then nudges you when a session is waiting, done, or stuck.
 
-[**↓ Download for macOS**](https://github.com/hellokidder/PokePoke/releases/latest) · [**Website**](https://pokepoke.app) · [**Privacy**](https://pokepoke.app/privacy.html) · [**Terms**](https://pokepoke.app/terms.html)
+[**↓ Download for macOS**](https://github.com/hellokidder/PokePoke/releases/latest) · [**Website**](https://pokepoke.app) · [**Privacy**](https://pokepoke.app/privacy) · [**Terms**](https://pokepoke.app/terms)
 
 ![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-black?logo=apple)
 ![Latest Release](https://img.shields.io/github/v/release/hellokidder/PokePoke)
 ![Local-first](https://img.shields.io/badge/data-local--first-5eead4)
+
+<a href="https://www.producthunt.com/products/pokepoke-agent-attention-for-macos?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-pokepoke" target="_blank" rel="noopener noreferrer"><img alt="PokePoke on Product Hunt" width="200" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1195077&theme=light&t=1784033324607"></a>
 
 <br />
 
@@ -55,8 +57,21 @@ Connect the agents you already use. PokePoke writes user-level hook config and k
 | **Claude Code** | `SessionStart` / `UserPromptSubmit` / `Notification` / `Stop` / `StopFailure` |
 | **Cursor** | `sessionStart` / `beforeSubmitPrompt` / `stop` / `sessionEnd` |
 | **Codex CLI** | `SessionStart` / `UserPromptSubmit` / `Stop` |
+| **opencode** | `session.created` / `session.idle` / `permission.updated` / `session.error` |
+| **pi** | `session_start` / `before_agent_start` / `agent_settled` / `session_shutdown` |
+| **omp** (Oh My Pi) | `session_start` / `before_agent_start` / `agent_end` / `tool_approval_requested` / `session_shutdown` |
+| **Kimi Code** | `SessionStart` / `UserPromptSubmit` / `Stop` / `StopFailure` / `PermissionRequest` |
+| **Grok Build** | `SessionStart` / `UserPromptSubmit` / `Notification` / `Stop` / `StopFailure` / `SessionEnd` |
 
-**Terminal jump** lands on the right window — not just any terminal: **iTerm2**, **Terminal.app**, **Ghostty**, and **Cursor**.
+Each integration connects per-agent from the menu bar in one click. PokePoke only adds or removes its own hook entries — the rest of your config is left untouched.
+
+**Terminal jump** lands on the right window — not just any terminal.
+
+- **iTerm2** / **Terminal.app** — matched by `tty`
+- **Ghostty 1.4+** — matched by the native `tty` property, so multiple tabs or splits in the same directory still jump to the exact pane. **Ghostty 1.3** falls back to the stable terminal id captured at session start. The first jump triggers a one-time macOS prompt "PokePoke wants to control Ghostty" — click Allow
+- **WezTerm** (`WEZTERM_PANE`) / **otty** (`OTTY_PANE_ID`) / **Orca** (`ORCA_PANE_KEY`) / **herdr** / **cmux** / **tmux** — jump straight to the exact pane
+- **Warp** — brings the window forward (Warp exposes no scriptable pane lookup)
+- **Cursor** — opens the matching workspace
 
 ## Privacy — local-first
 
@@ -74,13 +89,13 @@ Everything PokePoke tracks lives on your machine under `~/.pokepoke/`. Hooks tal
 | Terminal jump | Basic | **Unlimited** |
 | Integrations | All | All |
 
-**Pro** — $1.99/mo or $19.99 one-time lifetime. License activation is handled through Creem; the key is stored in the macOS Keychain.
+**Pro** — $1.99/mo or $14.99 one-time lifetime (regular $19.99). License activation is handled through Creem; the key is stored in the macOS Keychain.
 
 → [Get Pro at pokepoke.app](https://pokepoke.app/#pricing)
 
 ## Install
 
-1. [Download the latest `.dmg`](https://github.com/hellokidder/PokePoke/releases/latest) (Apple Silicon).
+1. [Download the latest `.dmg`](https://github.com/hellokidder/PokePoke/releases/latest) — macOS 13 (Ventura) or newer, Apple Silicon.
 2. Open it and drag PokePoke to Applications.
 3. Launch PokePoke — it lives in your menu bar. Connect your agents from the panel.
 
@@ -94,9 +109,9 @@ Updates are delivered in-app via the built-in updater.
 
 - **Website:** [pokepoke.app](https://pokepoke.app)
 - **Releases:** [github.com/hellokidder/PokePoke/releases](https://github.com/hellokidder/PokePoke/releases)
-- **Privacy Policy:** [pokepoke.app/privacy.html](https://pokepoke.app/privacy.html)
-- **Terms of Service:** [pokepoke.app/terms.html](https://pokepoke.app/terms.html)
-- **Refund Policy:** [pokepoke.app/refund.html](https://pokepoke.app/refund.html)
+- **Privacy Policy:** [pokepoke.app/privacy](https://pokepoke.app/privacy)
+- **Terms of Service:** [pokepoke.app/terms](https://pokepoke.app/terms)
+- **Refund Policy:** [pokepoke.app/refund](https://pokepoke.app/refund)
 - **Contact:** hellokiddermail@gmail.com
 
 ---
