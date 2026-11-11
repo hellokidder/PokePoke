@@ -6,7 +6,7 @@ pub mod sounds;
 pub mod updater;
 
 pub use focus::{capture_ghostty_focused_terminal_id, cwds_compatible};
-pub use integration::{cc_integration_status, emit_cc_integration_updated, HookDriftState};
+pub use integration::HookDriftState;
 pub use updater::{PendingUpdate, PendingUpdateState};
 
 use crate::popup::{self, PopupList};

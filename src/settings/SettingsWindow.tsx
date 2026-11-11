@@ -257,13 +257,10 @@ export default function SettingsWindow() {
       `- App 版本: ${version || "unknown"}`,
       `- 系统: ${navigator.userAgent}`,
     ].join("\n");
+    // 必须指向公仓:用户只装了公开版本,私仓 issues 对他们返回 404。
     const url =
-      "https://github.com/hellokidder/poke-poke/issues/new?" +
-      new URLSearchParams({
-        title: "[反馈] ",
-        body,
-        labels: "feedback",
-      }).toString();
+      "https://github.com/hellokidder/PokePoke/issues/new?" +
+      new URLSearchParams({ title: "[反馈] ", body }).toString();
     await openUrl(url);
   };
 

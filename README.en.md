@@ -166,7 +166,7 @@ The toggle at the bottom-left of the panel is the master "Notifications" switch 
 
 ## Contributing
 
-- **Issues are welcome** — bug reports, feature requests, usage questions.
+- **Issues are welcome** — [bug reports, feature requests, usage questions](https://github.com/hellokidder/PokePoke/issues).
 - **Pull requests are not accepted**: this repo is a one-way mirror of an internal
   development repo, so anything merged here would be overwritten on the next release.
   Please open an issue instead; fixes land in the internal repo and ship with the next
@@ -203,4 +203,4 @@ rm -f ~/.local/bin/poke-hook
 - **MIT** — see [LICENSE](LICENSE). Use it, modify it, redistribute it, including commercially.
 - **Every feature is free** — no paid tier, no feature gate, no daily quota. No data collection, no account required.
 - **The name and logo are not covered** — `PokePoke` and the octopus icon may not be used for your fork or derivative distribution. See [TRADEMARK.md](TRADEMARK.md).
-- If it saves you time, a star is welcome; a donation option will open later (it won't gate any feature).
+- If it saves you time, a star is welcome.

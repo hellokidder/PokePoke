@@ -32,6 +32,26 @@ This file records **user-visible changes** in Poke Poke. It is published with ea
 
 ---
 
+## [1.1.7] - 2026-11-11
+
+### Added
+
+- Keyboard control in the quiet mode panel: the duration is focused on open, arrow keys
+  switch the duration, Enter starts immediately, Esc closes
+
+### Changed
+
+- The tray context menu no longer lists per-integration status and connect toggles;
+  integrations are managed in Settings → Integrations (which covers all 9 of them)
+
+### Fixed
+
+- Fixed the update prompt's "Click to upgrade now, or skip this version for later" text
+  being clipped at the bottom
+- Fixed the "Send feedback" link pointing at an internal repository, which failed to open
+
+---
+
 ## [1.1.6] - 2026-11-11
 
 ### Added

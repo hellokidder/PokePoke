@@ -163,7 +163,7 @@ panel 左下角 toggle 是「全局提示」总开关——关掉后状态变化
 
 ## 参与方式
 
-- **Issue 欢迎**：bug 报告、功能建议、使用问题都请开 issue。
+- **Issue 欢迎**：bug 报告、功能建议、使用问题都请[开 issue](https://github.com/hellokidder/PokePoke/issues)。
 - **不接受 Pull Request**：本仓的源码由内部仓单向同步，直接合并的 PR 会在下次发版被覆盖。
   修复请提 issue，我在内部仓合并后随版本发布（署名保留）。
 
@@ -198,4 +198,4 @@ rm -f ~/.local/bin/poke-hook
 - **MIT** —— 见 [LICENSE](LICENSE)。可自由使用、修改、再分发,包括商业用途。
 - **全功能免费**：没有付费档、没有功能门禁、没有每日配额;不收集数据、不要求账号。
 - **商标不在授权范围内** —— `PokePoke` 这个名字和八爪鱼图标不能用于你的 fork / 衍生发行版,详见 [TRADEMARK.md](TRADEMARK.md)。
-- 如果你觉得它有用,欢迎 star;后续会开放捐赠入口(不影响任何功能)。
+- 如果你觉得它有用,欢迎 star。

@@ -1,7 +1,5 @@
-use crate::commands;
 use crate::quiet_mode::QuietModeState;
 use crate::settings::TrayIconStyle;
-use std::process::Command;
 use std::sync::Arc;
 use tauri::{
     image::Image,
@@ -52,16 +50,7 @@ pub fn create_tray(app: &AppHandle, style: TrayIconStyle) -> tauri::Result<()> {
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id().as_ref() {
-            "cc_toggle" => handle_cc_toggle(app),
-            "codex_install" => handle_codex_install(app),
-            "codex_uninstall" => handle_codex_uninstall(app),
-            "codex_check" => handle_codex_check(app),
-            "cursor_install" => handle_cursor_install(app),
-            "cursor_uninstall" => handle_cursor_uninstall(app),
-            "cursor_check" => handle_cursor_check(app),
-            "opencode_install" => handle_opencode_install(app),
-            "opencode_uninstall" => handle_opencode_uninstall(app),
-            "opencode_check" => handle_opencode_check(app),
+            "settings" => open_settings_window(app),
             "quiet_mode_end" => handle_quiet_mode_end(app),
             "quit" => {
                 crate::log_info!("app", "exiting reason=tray_quit");
@@ -113,116 +102,7 @@ pub fn apply_tray_icon_style(app: &AppHandle, style: TrayIconStyle) {
 }
 
 fn build_tray_menu(app: &AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry>> {
-    let cc_status = commands::cc_integration_status();
-    let cc_disconnected = is_integration_manually_disconnected(app, "cc");
-    let cc_effective_connected = cc_status.connected && !cc_disconnected;
-    let cc_status_label = if cc_disconnected {
-        "Claude Code: Manually disconnected"
-    } else if cc_effective_connected {
-        "Claude Code: Connected \u{2713}"
-    } else if cc_status.repair_available && cc_status.issue != "healthy" {
-        "Claude Code: Needs Repair"
-    } else if cc_status.repair_available {
-        "Claude Code: Not connected"
-    } else {
-        "Claude Code: Repair Unavailable"
-    };
-    let cc_action_label = if cc_effective_connected {
-        "Disconnect Claude Code"
-    } else if cc_disconnected {
-        "Connect Claude Code"
-    } else if cc_status.repair_available && cc_status.issue != "healthy" {
-        "Repair Claude Code Integration"
-    } else if cc_status.repair_available {
-        "Connect Claude Code"
-    } else {
-        "Repair Claude Code Unavailable"
-    };
-    let cc_status_item = MenuItemBuilder::with_id("cc_status", cc_status_label)
-        .enabled(false)
-        .build(app)?;
-    let cc_item = MenuItemBuilder::with_id("cc_toggle", cc_action_label)
-        .enabled(cc_effective_connected || cc_status.repair_available)
-        .build(app)?;
-
-    let codex_connected = is_codex_connected();
-    let codex_status_label = if codex_connected {
-        "Codex CLI: Connected \u{2713}"
-    } else {
-        "Codex CLI: Not connected"
-    };
-    let codex_action_id = if codex_connected {
-        "codex_uninstall"
-    } else {
-        "codex_install"
-    };
-    let codex_action_label = if codex_connected {
-        "Disconnect Codex CLI"
-    } else {
-        "Connect Codex CLI"
-    };
-    let codex_status_item = MenuItemBuilder::with_id("codex_status", codex_status_label)
-        .enabled(false)
-        .build(app)?;
-    let codex_action_item =
-        MenuItemBuilder::with_id(codex_action_id, codex_action_label).build(app)?;
-    let codex_check_item =
-        MenuItemBuilder::with_id("codex_check", "Check Codex CLI Status").build(app)?;
-
-    // Cursor 现改为全局接入（`~/.cursor/hooks.json`），与 CC 一致的三段式交互：
-    //   1) 不可点的状态 label
-    //   2) Install / Uninstall 根据当前连接状态切换
-    //   3) Check Now 手动刷新（对齐 brief 中"查看状态"的语义）
-    let cursor_connected = is_cursor_connected();
-    let cursor_status_label = if cursor_connected {
-        "Cursor: Connected \u{2713}"
-    } else {
-        "Cursor: Not connected"
-    };
-    let cursor_action_id = if cursor_connected {
-        "cursor_uninstall"
-    } else {
-        "cursor_install"
-    };
-    let cursor_action_label = if cursor_connected {
-        "Disconnect Cursor"
-    } else {
-        "Connect Cursor"
-    };
-    let cursor_status_item = MenuItemBuilder::with_id("cursor_status", cursor_status_label)
-        .enabled(false)
-        .build(app)?;
-    let cursor_action_item =
-        MenuItemBuilder::with_id(cursor_action_id, cursor_action_label).build(app)?;
-    let cursor_check_item =
-        MenuItemBuilder::with_id("cursor_check", "Check Cursor Status").build(app)?;
-
-    // opencode:与 Cursor 一致的三段式(状态 label + Connect/Disconnect + Check)。
-    // 接入单元是 `~/.config/opencode/plugin/pokepoke.js` 一个 JS plugin。
-    let opencode_connected = is_opencode_connected();
-    let opencode_status_label = if opencode_connected {
-        "opencode: Connected \u{2713}"
-    } else {
-        "opencode: Not connected"
-    };
-    let opencode_action_id = if opencode_connected {
-        "opencode_uninstall"
-    } else {
-        "opencode_install"
-    };
-    let opencode_action_label = if opencode_connected {
-        "Disconnect opencode"
-    } else {
-        "Connect opencode"
-    };
-    let opencode_status_item = MenuItemBuilder::with_id("opencode_status", opencode_status_label)
-        .enabled(false)
-        .build(app)?;
-    let opencode_action_item =
-        MenuItemBuilder::with_id(opencode_action_id, opencode_action_label).build(app)?;
-    let opencode_check_item =
-        MenuItemBuilder::with_id("opencode_check", "Check opencode Status").build(app)?;
-
+    let settings_item = MenuItemBuilder::with_id("settings", "Settings\u{2026}").build(app)?;
     let quit_item = MenuItemBuilder::with_id("quit", "Quit").build(app)?;
 
     let mut menu_builder = MenuBuilder::new(app);
@@ -245,154 +125,7 @@ fn build_tray_menu(app: &AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wr
         }
     }
 
-    menu_builder
-        .item(&cc_status_item)
-        .item(&cc_item)
-        .item(&codex_status_item)
-        .item(&codex_action_item)
-        .item(&codex_check_item)
-        .item(&cursor_status_item)
-        .item(&cursor_action_item)
-        .item(&cursor_check_item)
-        .item(&opencode_status_item)
-        .item(&opencode_action_item)
-        .item(&opencode_check_item)
-        .separator()
-        .item(&quit_item)
-        .build()
-}
-
-fn is_cursor_connected() -> bool {
-    let hook_path = hook_bin_path();
-    if !hook_path.exists() {
-        return false;
-    }
-    Command::new(&hook_path)
-        .arg("--check-cursor")
-        .output()
-        .ok()
-        .and_then(|o| {
-            let out = String::from_utf8_lossy(&o.stdout);
-            serde_json::from_str::<serde_json::Value>(out.trim()).ok()
-        })
-        .and_then(|v| v["connected"].as_bool())
-        .unwrap_or(false)
-}
-
-fn is_codex_connected() -> bool {
-    let hook_path = hook_bin_path();
-    if !hook_path.exists() {
-        return false;
-    }
-    Command::new(&hook_path)
-        .arg("--check-codex")
-        .output()
-        .ok()
-        .and_then(|o| {
-            let out = String::from_utf8_lossy(&o.stdout);
-            serde_json::from_str::<serde_json::Value>(out.trim()).ok()
-        })
-        .and_then(|v| v["connected"].as_bool())
-        .unwrap_or(false)
-}
-
-fn is_opencode_connected() -> bool {
-    let hook_path = hook_bin_path();
-    if !hook_path.exists() {
-        return false;
-    }
-    Command::new(&hook_path)
-        .arg("--check-opencode")
-        .output()
-        .ok()
-        .and_then(|o| {
-            let out = String::from_utf8_lossy(&o.stdout);
-            serde_json::from_str::<serde_json::Value>(out.trim()).ok()
-        })
-        .and_then(|v| v["connected"].as_bool())
-        .unwrap_or(false)
-}
-
-fn integration_from_install_subcmd(subcmd: &str) -> Option<&'static str> {
-    match subcmd {
-        "--install" => Some("cc"),
-        "--install-codex" => Some("codex"),
-        "--install-cursor" => Some("cursor"),
-        "--install-opencode" => Some("opencode"),
-        _ => None,
-    }
-}
-
-fn disconnect_via_app(app: &AppHandle, source: &str) {
-    let settings_store =
-        app.state::<std::sync::Arc<std::sync::Mutex<crate::settings::SettingsStore>>>();
-    let session_store =
-        app.state::<std::sync::Arc<std::sync::Mutex<crate::sessions::SessionStore>>>();
-    let popup_list = app.state::<crate::popup::PopupList>();
-    commands::integration::disconnect_integration_fully(
-        app,
-        source,
-        &settings_store,
-        &session_store,
-        &popup_list,
-    );
-}
-
-fn handle_cc_toggle(app: &AppHandle) {
-    let cc_disconnected = is_integration_manually_disconnected(app, "cc");
-    let connected = commands::cc_integration_status().connected && !cc_disconnected;
-    if connected {
-        disconnect_via_app(app, "cc");
-        return;
-    }
-
-    run_hook_cli(app, "--install");
-    commands::emit_cc_integration_updated(app);
-}
-
-fn is_integration_manually_disconnected(app: &AppHandle, source: &str) -> bool {
-    app.try_state::<std::sync::Arc<std::sync::Mutex<crate::settings::SettingsStore>>>()
-        .map(|store| commands::integration::is_integration_disconnected(&store, source))
-        .unwrap_or(false)
-}
-
-fn handle_codex_install(app: &AppHandle) {
-    run_codex_cli(app, "--install-codex");
-}
-
-fn handle_codex_uninstall(app: &AppHandle) {
-    disconnect_via_app(app, "codex");
-}
-
-fn handle_codex_check(app: &AppHandle) {
-    refresh_tray_menu(app);
-}
-
-fn handle_cursor_install(app: &AppHandle) {
-    run_cursor_cli(app, "--install-cursor");
-}
-
-fn handle_cursor_uninstall(app: &AppHandle) {
-    disconnect_via_app(app, "cursor");
-}
-
-/// "Check Cursor Status" 菜单项：只触发一次 check + 刷新菜单，让状态 label
-/// 立即体现最新的 connected 值。stdout 的 JSON 已经被 tray 重建时用掉，
-/// 不额外再弹窗——"托盘菜单本身"就是状态呈现。
-fn handle_cursor_check(app: &AppHandle) {
-    refresh_tray_menu(app);
-}
-
-fn handle_opencode_install(app: &AppHandle) {
-    run_hook_cli(app, "--install-opencode");
-}
-
-fn handle_opencode_uninstall(app: &AppHandle) {
-    disconnect_via_app(app, "opencode");
-}
-
-fn handle_opencode_check(app: &AppHandle) {
-    refresh_tray_menu(app);
+    menu_builder.item(&settings_item).item(&quit_item).build()
 }
 
 fn handle_quiet_mode_end(app: &AppHandle) {
@@ -405,51 +138,6 @@ fn handle_quiet_mode_end(app: &AppHandle) {
     state.clear();
     crate::quiet_mode::notify_state_changed(app, &state);
     crate::log_info!("quiet_mode", "cancelled from tray menu");
-}
-
-fn run_cursor_cli(app: &AppHandle, subcmd: &str) {
-    run_hook_cli(app, subcmd);
-}
-
-fn run_codex_cli(app: &AppHandle, subcmd: &str) {
-    run_hook_cli(app, subcmd);
-}
-
-fn run_hook_cli(app: &AppHandle, subcmd: &str) {
-    let hook_path = hook_bin_path();
-    let bin = if hook_path.exists() {
-        hook_path
-    } else {
-        env_fallback_path()
-    };
-
-    if !bin.exists() {
-        crate::log_error!("tray", "poke-hook binary not found (path={:?})", bin);
-        return;
-    }
-    let output = Command::new(&bin).arg(subcmd).output();
-    if let Ok(o) = output {
-        if o.status.success() {
-            if let Some(source) = integration_from_install_subcmd(subcmd) {
-                if let Some(settings_store) = app
-                    .try_state::<std::sync::Arc<std::sync::Mutex<crate::settings::SettingsStore>>>()
-                {
-                    commands::integration::clear_integration_disconnected(&settings_store, source);
-                    commands::integration::mark_source_auto_connected(&settings_store, source);
-                }
-            }
-        }
-    }
-    refresh_tray_menu(app);
-}
-
-fn hook_bin_path() -> std::path::PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".into());
-    std::path::PathBuf::from(home).join(".local/bin/poke-hook")
-}
-
-fn env_fallback_path() -> std::path::PathBuf {
-    std::env::current_exe().unwrap_or_default()
 }
 
 pub fn refresh_tray_menu(app: &AppHandle) {

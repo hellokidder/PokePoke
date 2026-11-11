@@ -150,30 +150,18 @@ export function UpdatePopup() {
         <div className={POPUP_BODY_CLASS}>
           <div className="flex min-h-0 flex-1 gap-3">
             <div className="flex min-w-0 flex-1 flex-col">
-              <div className="mb-1.5 flex items-center gap-2">
+              <div className="mb-1 flex items-center gap-2">
                 <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-[14px] font-semibold tracking-[0.01em]">
                   {t("popup.update_title", { version })}
                 </span>
               </div>
-              <div className="overflow-hidden text-[12.5px] leading-[1.5] text-[var(--text-secondary)] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] [display:-webkit-box]">
-                {t("popup.update_message")}
-              </div>
-              <div className="mt-1.5">
-                <button
-                  type="button"
-                  className={cn(
-                    "cursor-pointer border-0 bg-transparent p-0 text-[11px] tracking-[0.02em] text-[var(--brand-purple)] underline",
-                    "hover:opacity-80",
-                    "disabled:cursor-default disabled:opacity-40 disabled:hover:text-purple-400",
-                  )}
-                  onClick={() =>
-                    openUrl(`https://github.com/hellokidder/PokePoke/releases/tag/v${version}`)
-                  }
-                  disabled={busy}
-                >
-                  {t("popup.update_notes_show")}
-                </button>
-              </div>
+              {/* 下载 / 安装阶段这块位置让给进度条:此时"点击立即升级"已经没意义,
+                  且正文列只有 ~66px,两样同时出现会把说明挤到 10px 高(重新触发裁字)。 */}
+              {!busy && (
+                <div className="overflow-hidden text-[12.5px] leading-[1.45] text-[var(--text-secondary)] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]">
+                  {t("popup.update_message")}
+                </div>
+              )}
               {phase === "downloading" && (
                 <div className="mt-2">
                   <div className="popup-progress-track h-1 w-full overflow-hidden rounded-[2px]">
@@ -215,30 +203,48 @@ export function UpdatePopup() {
               {t("popup.update_failed")}
             </div>
           )}
-          <div className="mt-2 flex items-center justify-end gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              className="surface-btn h-7 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              onClick={handleSkip}
+          {/* 查看更新说明挪到按钮行左侧：正文列只有 ~66px 高，留在这里会把
+              说明文字挤到 12px（需要 19px）—— 就是「文字下半截被裁掉」那个 bug。 */}
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              className={cn(
+                "min-w-0 truncate border-0 bg-transparent p-0 text-[11px] tracking-[0.02em] text-[var(--brand-purple)] underline",
+                "hover:opacity-80",
+                "disabled:cursor-default disabled:opacity-40 disabled:hover:text-purple-400",
+              )}
+              onClick={() =>
+                openUrl(`https://github.com/hellokidder/PokePoke/releases/tag/v${version}`)
+              }
               disabled={busy}
             >
-              {t("popup.update_skip")}
-            </Button>
-            <Button
-              size="sm"
-              className="h-7 border border-purple-500 bg-purple-500/85 text-white shadow-[0_0_12px_-2px_rgba(168,85,247,0.6)] hover:bg-purple-500"
-              onClick={phase === "error" ? handleRetry : handleInstall}
-              disabled={busy}
-            >
-              {phase === "downloading"
-                ? t("popup.update_downloading")
-                : phase === "installing"
-                  ? t("popup.update_installing")
-                  : phase === "error"
-                    ? t("popup.update_retry")
-                    : t("popup.update_install_now")}
-            </Button>
+              {t("popup.update_notes_show")}
+            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="surface-btn h-7 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                onClick={handleSkip}
+                disabled={busy}
+              >
+                {t("popup.update_skip")}
+              </Button>
+              <Button
+                size="sm"
+                className="h-7 border border-purple-500 bg-purple-500/85 text-white shadow-[0_0_12px_-2px_rgba(168,85,247,0.6)] hover:bg-purple-500"
+                onClick={phase === "error" ? handleRetry : handleInstall}
+                disabled={busy}
+              >
+                {phase === "downloading"
+                  ? t("popup.update_downloading")
+                  : phase === "installing"
+                    ? t("popup.update_installing")
+                    : phase === "error"
+                      ? t("popup.update_retry")
+                      : t("popup.update_install_now")}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
