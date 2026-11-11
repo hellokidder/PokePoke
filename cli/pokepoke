@@ -1,0 +1,62 @@
+#!/bin/sh
+POKEPOKE_PORT="${POKEPOKE_PORT:-9876}"
+POKEPOKE_HOST="http://127.0.0.1:${POKEPOKE_PORT}"
+
+case "$1" in
+  send)
+    TITLE="${2:?用法: pokepoke send <标题> <消息> [来源] [task_id] [status]}"
+    MSG="${3:?用法: pokepoke send <标题> <消息> [来源] [task_id] [status]}"
+    SOURCE="${4:-cli}"
+    TASK_ID="${5:-$(uuidgen 2>/dev/null || python3 -c 'import uuid; print(uuid.uuid4())')}"
+    STATUS="${6:-success}"
+    curl -s -X POST "$POKEPOKE_HOST/notify" \
+      -H "Content-Type: application/json" \
+      -d "{\"task_id\":\"$TASK_ID\",\"title\":\"$TITLE\",\"message\":\"$MSG\",\"source\":\"$SOURCE\",\"status\":\"$STATUS\"}"
+    echo ""
+    ;;
+  start)
+    TITLE="${2:?用法: pokepoke start <标题> <消息> [来源] [task_id]}"
+    MSG="${3:?用法: pokepoke start <标题> <消息> [来源] [task_id]}"
+    SOURCE="${4:-cli}"
+    TASK_ID="${5:-$(uuidgen 2>/dev/null || python3 -c 'import uuid; print(uuid.uuid4())')}"
+    curl -s -X POST "$POKEPOKE_HOST/notify" \
+      -H "Content-Type: application/json" \
+      -d "{\"task_id\":\"$TASK_ID\",\"title\":\"$TITLE\",\"message\":\"$MSG\",\"source\":\"$SOURCE\",\"status\":\"running\"}"
+    echo ""
+    ;;
+  done)
+    TASK_ID="${2:?用法: pokepoke done <task_id> [消息]}"
+    MSG="${3:-完成}"
+    curl -s -X POST "$POKEPOKE_HOST/notify" \
+      -H "Content-Type: application/json" \
+      -d "{\"task_id\":\"$TASK_ID\",\"title\":\"任务完成\",\"message\":\"$MSG\",\"status\":\"success\"}"
+    echo ""
+    ;;
+  fail)
+    TASK_ID="${2:?用法: pokepoke fail <task_id> [错误信息]}"
+    MSG="${3:-失败}"
+    curl -s -X POST "$POKEPOKE_HOST/notify" \
+      -H "Content-Type: application/json" \
+      -d "{\"task_id\":\"$TASK_ID\",\"title\":\"任务失败\",\"message\":\"$MSG\",\"status\":\"failed\"}"
+    echo ""
+    ;;
+  list)
+    curl -s "$POKEPOKE_HOST/notifications" | python3 -m json.tool 2>/dev/null || echo "Poke Poke 未运行"
+    ;;
+  clear)
+    curl -s -X POST "$POKEPOKE_HOST/notifications/read-all" && echo "已全部标记为已读"
+    ;;
+  *)
+    echo "Poke Poke - 任务通知中心"
+    echo ""
+    echo "用法: pokepoke <命令>"
+    echo ""
+    echo "命令:"
+    echo "  send <标题> <消息> [来源] [task_id] [status]   发送通知（默认 success）"
+    echo "  start <标题> <消息> [来源] [task_id]           创建 running 任务"
+    echo "  done <task_id> [消息]                          标记任务成功"
+    echo "  fail <task_id> [错误信息]                       标记任务失败"
+    echo "  list                                           列出所有任务"
+    echo "  clear                                          全部标记已读"
+    ;;
+esac

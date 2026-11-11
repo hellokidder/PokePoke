@@ -1,0 +1,573 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   简洁设计系统 - 明暗双模式
+   ========================================================================== */
+
+:root {
+  /* 亮色模式 — macOS 风格分层表面,避免纯白扁平 */
+  --bg-primary: rgb(248, 248, 252);
+  --bg-secondary: rgb(255, 255, 255);
+  --bg-tertiary: rgb(241, 241, 247);
+  /* 不透明底色 —— Portal 下拉 / 透明 Tauri 窗等不能透出桌面 */
+  --bg-primary-solid: rgb(248, 248, 252);
+  --bg-secondary-solid: rgb(255, 255, 255);
+
+  --border-color: rgba(15, 15, 35, 0.09);
+  --border-hover: rgba(15, 15, 35, 0.14);
+
+  --text-primary: rgb(24, 24, 38);
+  --text-secondary: rgb(82, 82, 102);
+  --text-tertiary: rgb(130, 130, 148);
+
+  /* 交互表面 */
+  --surface-muted: rgb(244, 244, 250);
+  --surface-hover: rgb(236, 236, 244);
+  --surface-input: rgb(255, 255, 255);
+  --surface-elevated: rgb(255, 255, 255);
+  --divider: rgba(15, 15, 35, 0.07);
+  --inset-highlight: rgba(255, 255, 255, 0.9);
+  --scrollbar-thumb: rgba(15, 15, 35, 0.12);
+
+  /* 品牌色 */
+  --brand-purple: #6d4fe8;
+  --brand-blue: #3b6fd9;
+
+  /* 状态色 */
+  --status-idle: #3b6fd9;
+  --status-running: #16a34a;
+  --status-pending: #d97706;
+  --status-failed: #dc2626;
+
+  /* 告警色 */
+  --alert-danger-title: #991b1b;
+  --alert-danger-text: #b91c1c;
+  --alert-danger-bg: rgba(254, 242, 242, 0.85);
+  --alert-danger-border: rgba(239, 68, 68, 0.22);
+  --alert-danger-accent: #ef4444;
+  --alert-warning-title: #92400e;
+  --alert-warning-text: #b45309;
+  --alert-warning-bg: rgba(255, 251, 235, 0.9);
+  --alert-warning-border: rgba(245, 158, 11, 0.28);
+  --alert-warning-accent: #f59e0b;
+
+  /* Popup / Pill */
+  --pill-border: rgba(15, 15, 35, 0.1);
+  --pill-bg: rgba(15, 15, 35, 0.04);
+  --pill-text: rgb(108, 108, 126);
+  --kbd-border: rgba(15, 15, 35, 0.12);
+  --kbd-bg: rgba(15, 15, 35, 0.05);
+  --kbd-text: rgb(52, 52, 72);
+  --progress-track: rgba(15, 15, 35, 0.08);
+  --code-block-bg: rgba(15, 15, 35, 0.04);
+  --code-block-text: rgb(52, 52, 72);
+  --success-text: #15803d;
+
+  /* Popup 光晕 */
+  --glow-update: linear-gradient(135deg, rgba(109, 79, 232, 0.18), rgba(220, 38, 38, 0.06));
+  --glow-idle: linear-gradient(135deg, rgba(59, 111, 217, 0.14), rgba(59, 111, 217, 0.04));
+  --glow-pending: linear-gradient(135deg, rgba(217, 119, 6, 0.16), rgba(217, 119, 6, 0.05));
+  --glow-failed: linear-gradient(135deg, rgba(220, 38, 38, 0.16), rgba(220, 38, 38, 0.05));
+  --glow-default: linear-gradient(135deg, rgba(109, 79, 232, 0.14), rgba(59, 111, 217, 0.06));
+
+  /* 阴影 */
+  --shadow-soft: 0 1px 3px rgba(15, 15, 35, 0.06), 0 1px 2px rgba(15, 15, 35, 0.04);
+  --shadow-medium: 0 4px 14px rgba(15, 15, 35, 0.08), 0 2px 6px rgba(15, 15, 35, 0.04);
+  --shadow-strong: 0 10px 28px rgba(15, 15, 35, 0.12), 0 4px 10px rgba(15, 15, 35, 0.06);
+  /* 无边框透明浮窗:衰减控制在 ~14px 内,完整落在窗口留白里不被裁 */
+  --shadow-floating: 0 6px 20px rgba(15, 15, 35, 0.16), 0 2px 8px rgba(15, 15, 35, 0.08);
+
+  /* shadcn/ui 兼容变量 */
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(240 10% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: var(--brand-purple);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: var(--border-color);
+  --input: var(--border-color);
+  --ring: var(--brand-purple);
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* 暗色模式 */
+  --bg-primary: rgba(22, 22, 35, 0.98);
+  --bg-secondary: rgba(30, 30, 45, 0.9);
+  --bg-tertiary: rgba(35, 35, 50, 0.8);
+  --bg-primary-solid: rgb(22, 22, 35);
+  --bg-secondary-solid: rgb(30, 30, 45);
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.12);
+
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+
+  --surface-muted: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --surface-input: rgba(0, 0, 0, 0.2);
+  --surface-elevated: rgba(30, 30, 45, 0.95);
+  --divider: rgba(255, 255, 255, 0.06);
+  --inset-highlight: rgba(255, 255, 255, 0.06);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+
+  /* 品牌色 - 暗色更亮 */
+  --brand-purple: #9d7cff;
+  --brand-blue: #5ba4ff;
+
+  /* 状态色 */
+  --status-idle: #5ba4ff;
+  --status-running: #4ade80;
+  --status-pending: #ffb042;
+  --status-failed: #ff6b7a;
+
+  --alert-danger-title: #ffd4d4;
+  --alert-danger-text: rgba(255, 240, 240, 0.78);
+  --alert-danger-bg: rgba(255, 107, 122, 0.08);
+  --alert-danger-border: rgba(255, 107, 122, 0.3);
+  --alert-danger-accent: #ff6b7a;
+  --alert-warning-title: #fde68a;
+  --alert-warning-text: rgba(253, 230, 138, 0.7);
+  --alert-warning-bg: rgba(255, 176, 66, 0.08);
+  --alert-warning-border: rgba(255, 176, 66, 0.35);
+  --alert-warning-accent: #ffb042;
+
+  --pill-border: rgba(255, 255, 255, 0.1);
+  --pill-bg: rgba(255, 255, 255, 0.08);
+  --pill-text: rgba(255, 255, 255, 0.55);
+  --kbd-border: rgba(255, 255, 255, 0.2);
+  --kbd-bg: rgba(255, 255, 255, 0.14);
+  --kbd-text: rgba(255, 255, 255, 0.9);
+  --progress-track: rgba(255, 255, 255, 0.1);
+  --code-block-bg: rgba(255, 255, 255, 0.05);
+  --code-block-text: rgba(255, 255, 255, 0.85);
+  --success-text: rgba(74, 222, 128, 0.85);
+
+  --glow-update: linear-gradient(135deg, rgba(157, 124, 255, 0.35), rgba(255, 107, 122, 0.15));
+  --glow-idle: linear-gradient(135deg, rgba(91, 164, 255, 0.3), rgba(91, 164, 255, 0.08));
+  --glow-pending: linear-gradient(135deg, rgba(255, 176, 66, 0.35), rgba(255, 176, 66, 0.1));
+  --glow-failed: linear-gradient(135deg, rgba(255, 107, 122, 0.35), rgba(255, 107, 122, 0.1));
+  --glow-default: linear-gradient(135deg, rgba(157, 124, 255, 0.25), rgba(91, 164, 255, 0.12));
+
+  /* 阴影 */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.25);
+  /* 无边框透明浮窗:衰减控制在 ~14px 内,完整落在窗口留白里不被裁 */
+  --shadow-floating: 0 6px 20px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /* shadcn/ui 兼容变量 */
+  --background: hsl(240 10% 3.9%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(240 10% 3.9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(240 10% 3.9%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: var(--brand-purple);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(240 3.7% 15.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(240 3.7% 15.9%);
+  --muted-foreground: hsl(240 5% 64.9%);
+  --accent: hsl(240 3.7% 15.9%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: var(--border-color);
+  --input: var(--border-color);
+  --ring: var(--brand-purple);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* 动画 */
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-slide-up: slide-up 200ms ease-out;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-monster-sway: monster-sway 1.2s ease-in-out infinite;
+  --animate-status-breath: status-breath 4s ease-in-out infinite;
+  --animate-lens-halo: lens-halo 2.5s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  @keyframes monster-sway {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-2px) rotate(-6deg); }
+    75% { transform: translateY(-2px) rotate(6deg); }
+  }
+  /* 状态圆点呼吸动画 */
+  @keyframes status-breath {
+    0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.4);
+    }
+  }
+  /* panel 状态点外圈光晕(running/pending) */
+  @keyframes lens-halo {
+    0%, 100% {
+      opacity: 0.25;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(1.2);
+    }
+  }
+  /* popup 更新动画 - 保留原有功能 */
+  @keyframes popup-update-indeterminate {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+  }
+
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+}
+
+/* ==========================================================================
+   工具类
+   ========================================================================== */
+@layer utilities {
+  /* 面板基础 — 用不透明底色,避免透明 Tauri 窗透出桌面 */
+  .panel-base {
+    background: var(--bg-primary-solid);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-medium);
+  }
+
+  /* 卡片基础 */
+  .card-base {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    transition: all 150ms ease-out;
+    cursor: pointer;
+  }
+
+  .card-base:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+  }
+
+  .card-base.active {
+    border-color: var(--brand-purple);
+    box-shadow: 0 0 0 1px var(--brand-purple), var(--shadow-medium);
+  }
+
+  /* 玻璃内层 / 按钮表面 */
+  .glass-inner {
+    background: var(--bg-secondary-solid);
+  }
+
+  .glass-btn {
+    background: var(--surface-muted);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .glass-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+  }
+
+  /* 次级按钮 / 输入框表面 */
+  .surface-btn {
+    border: 1px solid var(--border-color);
+    background: var(--surface-muted);
+    color: var(--text-primary);
+  }
+
+  .surface-btn:hover {
+    background: var(--surface-hover);
+  }
+
+  .surface-input {
+    border-color: var(--border-color);
+    background: var(--surface-input);
+  }
+
+  .surface-card {
+    border: 1px solid var(--border-color);
+    background: var(--surface-elevated);
+    box-shadow: inset 0 1px 0 var(--inset-highlight);
+  }
+
+  /* 静谧模式浮窗卡片:无边框窗自带浮起阴影 + 1px 收边,光晕收敛在卡片内部 */
+  .quiet-picker-card {
+    background: var(--bg-primary-solid);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-floating), inset 0 1px 0 var(--inset-highlight);
+  }
+
+  /* Popup 元素 */
+  .popup-pill {
+    border: 1px solid var(--pill-border);
+    background: var(--pill-bg);
+    color: var(--pill-text);
+  }
+
+  .popup-kbd {
+    border: 1px solid var(--kbd-border);
+    background: var(--kbd-bg);
+    color: var(--kbd-text);
+    box-shadow: inset 0 1px 0 var(--inset-highlight);
+  }
+
+  .popup-progress-track {
+    background: var(--progress-track);
+  }
+
+  .popup-code-block {
+    background: var(--code-block-bg);
+    color: var(--code-block-text);
+  }
+
+  /* 品牌渐变文字 */
+  .brand-gradient-text {
+    background: linear-gradient(135deg, var(--brand-purple), var(--brand-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Landing 信号红 — 全页唯一强调色(macOS 角标红方向)。
+     装饰性渐变/光晕/玻璃拟态已于 20260814 重设计中移除,见
+     docs/briefs/20260814-landing-redesign.md */
+  .landing-signal {
+    color: #ff453a;
+  }
+
+  /* hero 标题末尾的红色闪烁方块光标(终端签名) */
+  .landing-cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.82em;
+    margin-left: 0.1em;
+    background: #ff453a;
+    vertical-align: -0.05em;
+    animation: landing-blink 1.1s steps(1) infinite;
+  }
+
+  @keyframes landing-blink {
+    0%,
+    55% {
+      opacity: 1;
+    }
+    56%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  /* 像素八爪鱼的轻微浮动 */
+  .animate-float-y {
+    animation: landing-float-y 5.5s ease-in-out infinite;
+  }
+
+  @keyframes landing-float-y {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* 事件 ticker 无缝循环(配合双份内容) */
+  .landing-ticker-track {
+    animation: landing-ticker 42s linear infinite;
+  }
+
+  @keyframes landing-ticker {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* 减少动效支持 */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   基础层
+   ========================================================================== */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* WKWebView 桌面端 mousedown 会对可点击元素画默认 tap highlight 覆盖层
+     (暗色下呈白色一闪,不改 computed style,Chrome 无此行为)——全局禁用。
+     桌面窗内禁文本选择,防止点击微拖动选中文字造成同类闪烁;输入框除外。 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html:not(.landing-document) body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  html.landing-document,
+  body.landing-document,
+  html.landing-document #root {
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+    background: #050506;
+  }
+
+  body {
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+      "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Settings 透明窗:根节点也要圆角裁剪,否则四角会露出矩形 webview 底色 */
+  html.settings-window,
+  html.settings-window body,
+  html.settings-window #root {
+    border-radius: 14px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* Session panel 透明窗:圆角裁剪 + 不透明底色,避免中间滚动区透出桌面 */
+  html.panel-window,
+  html.panel-window body,
+  html.panel-window #root {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg-primary-solid);
+  }
+
+  /* Quiet picker 透明浮窗:根节点勿 overflow:hidden,否则卡片阴影被窗口边缘切断 */
+  html.quiet-mode-window,
+  html.quiet-mode-window body,
+  html.quiet-mode-window #root {
+    overflow: visible;
+    background: transparent;
+  }
+
+  /* WKWebView mousedown 会在按钮上叠一层白色 tap highlight(暗色主题下一闪即灭)。
+     quiet-mode 窗内所有可点元素统一压制,并去掉 focus ring 避免二次闪烁。 */
+  html.quiet-mode-window .quiet-interactive-btn {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  html.quiet-mode-window .quiet-interactive-btn:focus,
+  html.quiet-mode-window .quiet-interactive-btn:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Popup 关闭钮伸出卡片角；根节点勿 overflow:hidden 裁切 */
+  html.popup-window,
+  html.popup-window body,
+  html.popup-window #root {
+    overflow: visible;
+  }
+}

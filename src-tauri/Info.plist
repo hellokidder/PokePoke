@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    声明 PokePoke 为 macOS 菜单栏工具（UI Element）。
+    作用：
+      - NSApp 从启动之初就不是 Regular app，不占 Dock、不进 Cmd+Tab
+      - 创建 popup / panel 窗口时不会激活本进程，不抢用户当前应用的键盘焦点
+      - 避免 popup 提醒打断用户正在进行的输入
+    搭配 popup.rs 里的 non-activating NSPanel 处理，双保险。
+    Settings 窗口在 tray.rs 中通过运行时 set_activation_policy(Regular)
+    临时切换为前台模式，以便正常交互；关闭后切回 Accessory。
+  -->
+  <key>LSUIElement</key>
+  <true/>
+</dict>
+</plist>

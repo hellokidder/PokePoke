@@ -1,0 +1,78 @@
+[package]
+name = "poke-poke"
+version = "1.1.6"
+description = "macOS menu-bar attention tool for coding agents"
+authors = ["Kidder"]
+license = "MIT"
+edition = "2021"
+default-run = "poke-poke"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "poke_poke_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "pokehook"
+path = "src/bin/pokehook.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "macos-private-api"] }
+tauri-plugin-opener = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-global-shortcut = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1", features = ["v4"] }
+rfd = "0.15"
+chrono = { version = "0.4", features = ["serde"] }
+tower-http = { version = "0.6", features = ["cors"] }
+toml_edit = "0.22"
+libc = "0.2"
+# 首次启动按系统语言选中/英默认;跨平台、无 unsafe、极轻。仅用于 default_locale()。
+sys-locale = "0.3"
+
+# HTTP client(warp local_control 查询)
+# - reqwest: HTTP client。rustls-tls 避开 macOS Sec framework 链接 +
+#   避开 OpenSSL 依赖,bundle 体积更可控
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "blocking"] }
+# redact helper:正则脱敏 + URL host 提取(都已经在 transitive 树里,直接声明)
+regex = "1"
+url = "2"
+
+# 仅 macOS:通过 tauri-nspanel 把 popup 窗口构造成真正的 NSPanel
+# (can_become_key_window = false),从窗口模型层面彻底避免弹窗抢焦点。
+# 不走 crates.io,因为上游暂未发布 release tag;锁 commit rev 保证可复现。
+# 分支 v2.1 对应 Tauri 2.x。需要 tauri feature "macos-private-api"。
+[target."cfg(target_os = \"macos\")".dependencies]
+tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", rev = "a3122e894383aa068ec5365a42994e3ac94ba1b6" }
+objc2 = "0.6.4"
+objc2-foundation = { version = "0.3.2", features = ["NSDictionary", "NSAttributedString", "NSString"] }
+objc2-app-kit = { version = "0.3.2", features = ["NSAttributedString", "NSButton", "NSColor", "NSStatusItem"] }
+
+[dev-dependencies]
+proptest = "1"
+serial_test = "3.2.0"
+tempfile = "3.27.0"
+
+# CI 跑 `cargo clippy -- -D warnings`(见 .github/workflows/ci.yml)。默认 lint
+# 全部按 warn→deny 走,这里只 allow 经评估确认是噪音 / 不适合逐处修的:
+# - doc_lazy_continuation:rustdoc 把中文列表后的说明行(/// 顶格续写)误判成
+#   "列表项续行缺缩进"。逐处给 13+ 处中文 doc 加缩进会破坏可读性且无收益,
+#   项目 doc 以中文为主,全局 allow。
+[lints.clippy]
+doc_lazy_continuation = "allow"
+# too_many_lines 暂不接入:CI 跑 `-D warnings` 会把 warn 升 deny,focus.rs / http_server.rs 等
+# 存量大函数会立即 break CI。函数级体量改由拆分 brief(AGENTS.md §4a)逐个还债;文件级体量
+# 已由 scripts/check-file-size.sh ratchet 守住。还债后再考虑接入。
+

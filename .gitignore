@@ -1,0 +1,49 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-site
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# npm lock file (project uses pnpm)
+package-lock.json
+
+# Local Claude Code worktrees / scratch
+.claude/*
+# ...except terminal-e2e skill (checked-in project asset,见 .claude/skills/terminal-e2e/SKILL.md)
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/terminal-e2e/
+!.claude/skills/terminal-e2e/**
+
+# Codex 项目级 skills(与 .claude/skills 对齐; e2e artifacts 目录内 *.gitignore 忽略产物)
+.agents/skills/*
+!.agents/skills/terminal-e2e/
+!.agents/skills/terminal-e2e/**
+
+# Superpowers skills 执行期脚手架(plans / sdd task-report,memory
+# feedback_superpowers_plans_ephemeral:只作执行期,不做长期归档)
+.superpowers/
+
+# Cursor 项目级 hook 残留防护(PokePoke 采用用户级 ~/.cursor/hooks.json 接入;
+# 项目级会与用户级对同一事件双触发,且含机器特定路径,禁止提交)
+.cursor/hooks.json
